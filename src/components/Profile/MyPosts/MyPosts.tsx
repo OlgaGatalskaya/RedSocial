@@ -1,23 +1,55 @@
-import React from "react";
+import React, {ChangeEvent} from "react";
 import s from './MyPosts.module.css';
 import {Post} from "./Post/Post";
+import {PostType} from "../../../redux/state";
+
+type MyPostsTypes = {
+    postData: Array<PostType>
+    addPost: (newText: string) => void
+    updateNewPostText: (newText: string) => void
+    newPostText: string
+}
 
 
-export const MyPosts = () => {
+export const MyPosts = (props: MyPostsTypes) => {
+
+    let postsElement = props.postData.map(post => {
+        return (
+            <Post message={post.message} likesCount={post.likesCount}/>
+        )
+    })
+
+
+    const addPost = () => {
+
+        props.addPost(props.newPostText)
+        props.updateNewPostText('')
+
+
+    }
+
+
+    const onPostChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      let newText = e.currentTarget.value
+        props.updateNewPostText(newText)
+
+    }
+
     return (
 
         <div className={s.postBlock}>
             <h3>My posts</h3>
             <div>
                 <div>
-                    <textarea></textarea>
+                    <textarea
+                        onChange={onPostChange}
+                        value={props.newPostText}/>
                 </div>
                 <div>
-                    <button>Add post</button>
+                    <button onClick={addPost}>Add post</button>
                 </div>
                 <div className={s.posts}>
-                    <Post message={'Hi, how are you?'} likesCount={23}/>
-                    <Post message={"It's my first post"} likesCount={0}/>
+                    {postsElement}
 
                 </div>
             </div>
